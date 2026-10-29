@@ -1,0 +1,90 @@
+buildscript {
+  ext.SessionRecorderReactNative = [
+    kotlinVersion: "2.0.21",
+    minSdkVersion: 24,
+    compileSdkVersion: 36,
+    targetSdkVersion: 36
+  ]
+
+  ext.getExtOrDefault = { prop ->
+    if (rootProject.ext.has(prop)) {
+      return rootProject.ext.get(prop)
+    }
+
+    return SessionRecorderReactNative[prop]
+  }
+
+  repositories {
+    google()
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath "com.android.tools.build:gradle:8.7.2"
+    // noinspection DifferentKotlinGradleVersion
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${getExtOrDefault('kotlinVersion')}"
+  }
+}
+
+
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+
+apply plugin: "com.facebook.react"
+
+android {
+  namespace "com.sessionrecorderreactnative"
+
+  compileSdkVersion getExtOrDefault("compileSdkVersion")
+
+  // RN 0.88 exposes the public Dialog-window hook; older hosts may lack it.
+  // Select the tiny adapter from the host's RN sources, without reflection
+  // or referencing missing classes/methods from the common module.
+  def extraWindowSourceDir = {
+    def app = rootProject.allprojects.find {
+      it.plugins.hasPlugin("com.android.application") && it.extensions.findByName("react") != null
+    }
+    def rn = (app != null ? app.extensions.getByName("react") : project.extensions.getByName("react"))
+        .reactNativeDir.get().asFile
+    def api = new File(rn, "ReactAndroid/src/main/java/com/facebook/react/interfaces/ExtraWindowEventListener.kt")
+    def javaApi = new File(rn, "ReactAndroid/src/main/java/com/facebook/react/interfaces/ExtraWindowEventListener.java")
+    def context = new File(rn, "ReactAndroid/src/main/java/com/facebook/react/bridge/ReactContext.java")
+    def supported = (api.isFile() || javaApi.isFile()) && context.isFile() &&
+        context.getText("UTF-8").contains("addExtraWindowEventListener")
+    file(supported ? "src/extraWindows/java" : "src/legacyWindows/java")
+  }.call()
+  // Both adapters are checked-in sources, not task-generated directories.
+  // AGP SourceSet requires the concrete File rather than a Provider.
+  sourceSets.main.java.srcDir(extraWindowSourceDir)
+
+  defaultConfig {
+    consumerProguardFiles "consumer-rules.pro"
+    minSdkVersion getExtOrDefault("minSdkVersion")
+    targetSdkVersion getExtOrDefault("targetSdkVersion")
+  }
+
+  buildFeatures {
+    buildConfig true
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+
+  lint {
+    disable "GradleCompatible"
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+
+dependencies {
+  implementation "com.facebook.react:react-android"
+  implementation "androidx.viewpager2:viewpager2:1.1.0"
+  testImplementation "junit:junit:4.13.2"
+}
