@@ -22,6 +22,17 @@ namespace
     public:
         explicit LifecycleTurboModule(const InitParams &params) : ObjCTurboModule(params)
         {
+            methodMap_["getConstants"] = {0, [](jsi::Runtime &rt, TurboModule &,
+                const jsi::Value *, size_t) -> jsi::Value
+            {
+                jsi::Object constants(rt);
+#if DEBUG
+                constants.setProperty(rt, "buildMode", jsi::String::createFromAscii(rt, "debug"));
+#else
+                constants.setProperty(rt, "buildMode", jsi::String::createFromAscii(rt, "release"));
+#endif
+                return constants;
+            }};
             methodMap_["prepare"] = {0, [](jsi::Runtime &rt, TurboModule &module,
                 const jsi::Value *args, size_t count) -> jsi::Value
             {

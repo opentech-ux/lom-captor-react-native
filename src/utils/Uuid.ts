@@ -1,23 +1,26 @@
-import uuid from 'react-native-uuid';
+import resolveSessionRecorderReactNative from '../NativeSessionRecorderReactNative';
 
 /**
- * Creates an RFC 9562 UUID v7 without adding another randomness dependency.
- * `react-native-uuid` supplies entropy through its RN-compatible v4 generator;
- * this function applies the v7 timestamp, version, and variant layout.
+ * Creates an RFC 9562 UUID v7 using the platform CSPRNG through the private
+ * TurboModule. No JS crypto global, polyfill, or Math.random fallback is used.
+ * The layout retains 74 random bits alongside the timestamp/version/variant.
  */
 export const createUuidV7 = (): string => {
-  const randomUuid = uuid.v4();
+  const randomHex = resolveSessionRecorderReactNative()?.getUuidRandomHex();
 
-  if (typeof randomUuid !== 'string') {
-    throw new Error('react-native-uuid did not return a string UUID');
+  if (typeof randomHex !== 'string' || !/^[0-9a-f]{32}$/.test(randomHex)) {
+    throw new Error('Native UUID entropy is unavailable or invalid');
   }
 
-  const randomHex = randomUuid.replaceAll('-', '').toLowerCase();
-  if (!/^[0-9a-f]{32}$/.test(randomHex)) {
-    throw new Error('react-native-uuid returned an invalid UUID');
+  const timestamp = Date.now();
+  if (
+    !Number.isSafeInteger(timestamp) ||
+    timestamp < 0 ||
+    timestamp > 0xffffffffffff
+  ) {
+    throw new Error('UUID v7 timestamp is outside the unsigned 48-bit range');
   }
-
-  const timestampHex = Date.now().toString(16).padStart(12, '0');
+  const timestampHex = timestamp.toString(16).padStart(12, '0');
   const variant = (8 + (Number.parseInt(randomHex.charAt(3), 16) % 4)).toString(
     16
   );

@@ -8,6 +8,7 @@
 #include <jsi/jsi.h>
 #include <memory>
 #include <atomic>
+#include <string>
 
 namespace facebook::react
 {
@@ -19,6 +20,7 @@ namespace facebook::react
     SessionRecorderReactNativeImpl(std::shared_ptr<CallInvoker> jsInvoker);
     ~SessionRecorderReactNativeImpl();
 
+    std::string getUuidRandomHex(jsi::Runtime &rt);
     bool initJSI(jsi::Runtime &rt);
 
   private:

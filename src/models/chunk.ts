@@ -13,7 +13,7 @@ const LIB_T = 'mobile';
 export interface Chunk {
   sId: string;
   timestamp: number;
-  env?: SessionEnvironment;
+  env: SessionEnvironment;
   loms: Lom[];
   explorationEvents: ExplorationEvent[];
   actionEvents: ActionEvent[];
@@ -21,11 +21,11 @@ export interface Chunk {
 
 export const createChunk = (
   sessionId: string,
-  environment?: SessionEnvironment
+  environment: SessionEnvironment
 ): Chunk => ({
   sId: sessionId,
   timestamp: Date.now(),
-  ...(environment ? { env: environment } : {}),
+  env: environment,
   loms: [],
   explorationEvents: [],
   actionEvents: [],
@@ -34,8 +34,7 @@ export const createChunk = (
 export const toMapChunk = (chunk: Chunk): Record<string, any> => {
   return {
     lib_v: LIB_V,
-    framework: 'react-native',
-    ...(chunk.env ? { env: chunk.env } : {}),
+    env: chunk.env,
     type: LIB_T,
     ts: chunk.timestamp,
     sid: chunk.sId,

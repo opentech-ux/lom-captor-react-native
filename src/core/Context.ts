@@ -110,7 +110,7 @@ export class ContextImpl implements SessionRecorderContext {
   private readonly _lomsBySurface = new Map<number, Lom>();
   private readonly _activeSurfaceInstances = new Map<number, string>();
   private readonly _session: Session;
-  private readonly _environment: SessionEnvironment | undefined;
+  private readonly _environment: SessionEnvironment;
   private _detector: TreeDetector | null = null;
   private _gestures: GesturesCollector | null = null;
   private _state: SessionRecorderState | null = null;

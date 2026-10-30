@@ -9361,7 +9361,6 @@ __metadata:
     react: "npm:19.2.3"
     react-native: "npm:0.86.3"
     react-native-builder-bob: "npm:^0.41.0"
-    react-native-uuid: "npm:^2.0.4"
     react-native-web: "npm:~0.21.1"
     release-it: "npm:^19.2.4"
     turbo: "npm:^2.8.21"
@@ -10933,13 +10932,6 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/9f5d4f0710a67362d4c3df8b998e8cf22d8d8eaa1a1a0185b5a34588b0aa922d346baf22a9e89c43a46f2d0b04c64e9f9e658411114a9e97fd228e29553f6cb8
-  languageName: node
-  linkType: hard
-
-"react-native-uuid@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "react-native-uuid@npm:2.0.4"
-  checksum: 10c0/56bcf29fa59a3e4c6374e612d9adf4e2a5e7f1000e632451f0e4bf0fbeb00664eb8657a5af7e2adb64c435e96f42c535cc20529cffcc48a03581b41ba1761d2a
   languageName: node
   linkType: hard
 

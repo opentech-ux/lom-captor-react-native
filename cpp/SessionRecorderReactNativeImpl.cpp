@@ -3,6 +3,7 @@
 #include <react/renderer/uimanager/UIManagerBinding.h>
 #include <mutex>
 #include <cstring>
+#include <stdlib.h>
 #if defined(__ANDROID__)
 #include <jni.h>
 #include <cmath>
@@ -39,6 +40,27 @@ namespace facebook::react
     isAlive_ = std::make_shared<std::atomic<bool>>(true);
 #if defined(__ANDROID__)
     globalIsAlive = isAlive_;
+#endif
+  }
+
+  std::string SessionRecorderReactNativeImpl::getUuidRandomHex(jsi::Runtime &rt)
+  {
+#if defined(__APPLE__) || defined(__ANDROID__)
+    // Available before initJSI: session IDs are allocated during Context construction.
+    // Both platforms provide this CSPRNG in libc; no JS crypto polyfill is needed.
+    (void)rt;
+    unsigned char bytes[16];
+    arc4random_buf(bytes, sizeof(bytes));
+    constexpr char hex[] = "0123456789abcdef";
+    std::string result(sizeof(bytes) * 2, '0');
+    for (size_t i = 0; i < sizeof(bytes); ++i)
+    {
+      result[i * 2] = hex[bytes[i] >> 4];
+      result[i * 2 + 1] = hex[bytes[i] & 0x0f];
+    }
+    return result;
+#else
+    throw jsi::JSError(rt, "Native UUID entropy requires Android or iOS");
 #endif
   }
 

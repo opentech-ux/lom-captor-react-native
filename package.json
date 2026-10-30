@@ -172,8 +172,5 @@
       "vite"
     ],
     "version": "0.62.0"
-  },
-  "dependencies": {
-    "react-native-uuid": "^2.0.4"
   }
 }
