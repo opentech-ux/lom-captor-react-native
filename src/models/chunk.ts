@@ -7,7 +7,7 @@ import {
 import { toMapLom, type Lom } from './lom';
 import type { SessionEnvironment } from './environment';
 
-const LIB_V = '1.0.0';
+const LIB_V = '1.1.0';
 const LIB_T = 'mobile';
 
 export interface Chunk {

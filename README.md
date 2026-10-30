@@ -11,13 +11,13 @@ It captures gestures, scrolling, navigation context, and visible element geometr
 Install the package using npm:
 
 ```sh
-npm install lom-captor-react-native@1.0.0
+npm install lom-captor-react-native@1.1.0
 ```
 
 Or Yarn:
 
 ```sh
-yarn add lom-captor-react-native@1.0.0
+yarn add lom-captor-react-native@1.1.0
 ```
 
 LOM Captor React Native uses React Native autolinking. No SDK-specific changes to `MainActivity`, `MainApplication`, or `AppDelegate` are required.
